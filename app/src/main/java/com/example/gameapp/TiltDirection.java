@@ -19,6 +19,7 @@ public class TiltDirection implements SensorEventListener {
     private Context context;
 
     public TiltDirection(Context context) {
+        // Create instance of accelerometer sensor
         this.context = context;
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -27,6 +28,7 @@ public class TiltDirection implements SensorEventListener {
     }
 
     private void startTiltCheck() {
+        // Start tracking tilt
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -37,11 +39,12 @@ public class TiltDirection implements SensorEventListener {
     }
 
     private void checkTiltDirection() {
-        if (acceleration[2] < 3) {
+        // Check direction of the tilt
+        if (acceleration[2] < 9 && acceleration[0] > 4) {
             tilt = "green";
             Log.d("Tilt detected", "green");
 
-        } else if (acceleration[0] < -4 && acceleration[1] <1) {
+        } else if (acceleration[0] < -4 && acceleration[2] < 9) {
             tilt = "red";
             Log.d("Tilt detected", "red");
         } else if (acceleration[1] < -1) {
@@ -63,6 +66,7 @@ public class TiltDirection implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        // Bind values for axis
         acceleration[0] = event.values[0]; // x
         acceleration[1] = event.values[1]; // y
         acceleration[2] = event.values[2]; // z
@@ -74,18 +78,13 @@ public class TiltDirection implements SensorEventListener {
     }
 
 
-    //gets the tilt sequence
+    // Gets the tilt sequence
     public String getTilt(){
         return tilt;
     }
-    //once called clears the tilt sequence
+    // Clears the tilt sequence
     public void clearTilt(){
         tilt = null;
     }
-    public boolean isTiltDetected(){
-        return isTiltDetected;
-    }
-    public void resetTilt(){
-        isTiltDetected = false;
-    }
+
 }

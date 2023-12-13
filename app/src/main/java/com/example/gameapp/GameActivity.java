@@ -33,16 +33,12 @@ public class GameActivity extends AppCompatActivity {
         Blue = findViewById(R.id.imageViewBlue);
         Green = findViewById(R.id.imageViewGreen);
         Yellow = findViewById(R.id.imageViewYellow);
-        sequenceList = findViewById(R.id.sequenceList);//test
+
         score = findViewById(R.id.score);
-        //initial sequence
+        // Initialise sequence
         sequence = new Sequence();
         colourSequence = sequence.GenerateSequence(sequenceNumber);
-        StringBuilder build = new StringBuilder();
-        for (String item : colourSequence) {
-            build.append(item).append("\n");
-        }
-        sequenceList.setText(build.toString());
+
 
         // Start flashing the sequence
         flashSequence();
@@ -70,78 +66,89 @@ public class GameActivity extends AppCompatActivity {
         checkUserSequence();
     }
 
-    private int getColorFromString(String colorName) {
-        switch (colorName) {
-            case "red":
-                return Color.rgb(244, 67, 54);
-            case "blue":
-                return Color.rgb(33, 150, 243);
-            case "green":
-                return Color.rgb(76, 175, 80);
-            case "yellow":
-                return Color.rgb(255, 235, 59);
-            default:
-                return Color.WHITE;
+    private int getColorFromString(String colourName) {
+        // Get colour value from colour string
+        if (colourName != null) {
+            switch (colourName) {
+                case "red":
+                    return Color.rgb(244, 67, 54);
+                case "blue":
+                    return Color.rgb(33, 150, 243);
+                case "green":
+                    return Color.rgb(76, 175, 80);
+                case "yellow":
+                    return Color.rgb(255, 235, 59);
+                default:
+                    return Color.WHITE;
+            }
+        } else {
+            return Color.WHITE; // Default value
         }
     }
 
-    private ImageView getColorView(String colorName) {
-        switch (colorName) {
-            case "red":
-                return Red;
-            case "blue":
-                return Blue;
-            case "green":
-                return Green;
-            case "yellow":
-                return Yellow;
-            default:
-                return null;
+    private ImageView getColorView(String colourName) {
+        // Get ImageView from colour string
+        if (colourName != null) {
+            switch (colourName) {
+                case "red":
+                    return Red;
+                case "blue":
+                    return Blue;
+                case "green":
+                    return Green;
+                case "yellow":
+                    return Yellow;
+                default:
+                    return null;
+            }
+        } else {
+            return null; // Default value
         }
     }
 
-    // flashes the tile according to the color
+    // Flashes the tile according to the color
     private void flashImageView(int color, ImageView current) {
         int flashColor = Color.WHITE;
+        if(current != null){
+            // Set the background color to the flashing color
+            current.setBackgroundColor(flashColor);
 
-        // Set the background color to the flashing color
-        current.setBackgroundColor(flashColor);
+            // Reset the background color after a delay
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    current.setBackgroundColor(color); // Reset to original color
+                }
+            }, 600); // Delay after the color change (adjust as needed)
 
-        // Reset the background color after a delay
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                current.setBackgroundColor(color); // Reset to original color
-            }
-        }, 600); // Delay after the color change (adjust as needed)
 
+        }
 
     }
     private void checkUserSequence() {
         String currentTilt = tiltDirection.getTilt();
+        flashImageView(getColorFromString(currentTilt), getColorView(currentTilt));
 
-
-
+        // Check if there is a tilt and there are colours in sequence
         if (currentTilt != null && colourSequence != null && !colourSequence.isEmpty()) {
             Log.d("Debug", "Current Tilt: " + currentTilt);
             Log.d("Debug", "Colour Sequence: " + colourSequence.toString());
+            // If tilt is correct remove it from current sequence
             if (currentTilt.equals(colourSequence.get(0))) {
+
                 colourSequence.remove(0);
 
-                StringBuilder build = new StringBuilder();
-                for (String item : colourSequence) {
-                    build.append(item).append("\n");
-                }
-                sequenceList.setText(build.toString());
+
                 tiltDirection.clearTilt();
 
-            } else {
+            } else { // If tilt is not correct to the sequence show gameover activity
                 Intent gameOver = new Intent(getApplicationContext(), GameOver.class);
                 gameOver.putExtra("gameScore", totalScore);
                 startActivity(gameOver);
+                finish();
             }
-        } else if (colourSequence.isEmpty() && currentTilt == null){//
+        } else if (colourSequence.isEmpty() && currentTilt == null){// If the sequence list is empty create next level
             Log.d("Debug", "Current Tilt: " + currentTilt);
             Log.d("Debug", "making next sequence");
             Log.d("Debug", "Colour Sequence is null or empty.");
@@ -154,16 +161,20 @@ public class GameActivity extends AppCompatActivity {
             colourSequence.clear();
             colourSequence = sequence.GenerateSequence(sequenceNumber);
 
-            StringBuilder build = new StringBuilder();
-            for (String item : colourSequence) {
-                build.append(item).append("\n");
-            }
-            sequenceList.setText(build.toString());
+
+
             tiltDirection.clearTilt();
             sequenceIndex = 0;
-            flashSequence();
+            // Delay flash new sequence
+            try{
+                Thread.sleep(600);
+                flashSequence();
+            } catch (InterruptedException e){
 
-        } else{
+            }
+
+
+        } else{ // Code to keep checking the tilt until something happens
             handler.postDelayed(this::checkUserSequence, 100);
         }
     }

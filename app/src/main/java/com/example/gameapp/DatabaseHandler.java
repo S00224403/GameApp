@@ -12,7 +12,7 @@ import com.example.gameapp.HighscoreClass;
 import java.util.ArrayList;
 import java.util.List;
 
-
+// Code from github https://github.com/JamieBredin/AndoridStudioDatabase
 public class DatabaseHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "highscoreDatabase";

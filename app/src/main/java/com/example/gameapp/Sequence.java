@@ -9,6 +9,7 @@ public class Sequence {
     List<String> colourSequence = new ArrayList<>();
     String[] colours = new String[]{"red", "blue", "green", "yellow"};
     public List<String> GenerateSequence(int gameLength){
+        // Create random sequence of colours
         colourSequence.clear();
         for (int i = 0; i < gameLength; i++) {
             colourSequence.add(colours[random.nextInt(colours.length)]);

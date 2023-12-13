@@ -1,5 +1,5 @@
 package com.example.gameapp;
-
+// Code from github https://github.com/JamieBredin/AndoridStudioDatabase
 public class HighscoreClass <HighscoreClass>{
     int _id;
     String _name;
@@ -38,4 +38,10 @@ public class HighscoreClass <HighscoreClass>{
 
     public void setHighscore(int highscore){
         this._highscore = highscore;
-    }}
+    }
+    // Added to string for displaying scores in high scores activity
+    @Override
+    public String toString(){
+        return "Name: " + getName() + " | Score: " + getHighscore();
+    }
+}
